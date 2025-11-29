@@ -1,0 +1,969 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:wght@400;700&display=swap" onload='this.onload = null, this.rel = "stylesheet"'>
+<script>var bidId = "{BID_ID}";</script>
+
+<noscript>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:wght@400;700&display=swap">
+</noscript>
+<div id="er_banner_wrap" style="width: 100%; height: 100%; overflow: hidden; position: relative; background: #000;">
+    <video id="ad-video-bg" muted loop playsinline autoplay src="{BRAND_VIDEO_URL}"></video>
+    <video id="ad-video" muted src="{BRAND_VIDEO_URL}" autoplay muted playsinline></video>
+    
+    <div id="mute-button-wrapper" style="position: absolute; top: 10px; left: 10px; z-index: 10;">
+        <div id="mute-button" style="display: flex; align-items: center; justify-content: center; padding: 5px 10px; background: rgba(0,0,0,0.5); color: white; cursor: pointer; border-radius: 5px;">
+            <svg xmlns="https://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-volume-off-icon lucide-volume-off">
+                <path d="M16 9a5 5 0 0 1 .95 2.293"/>
+                <path d="M19.364 5.636a9 9 0 0 1 1.889 9.96"/>
+                <path d="m2 2 20 20"/>
+                <path d="m7 7-.587.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298V11"/>
+                <path d="M9.828 4.172A.686.686 0 0 1 11 4.657v.686"/>
+            </svg>
+        </div>
+    </div>
+    
+    <div id="skip-button" style="display: none; align-items: center; justify-content: center; position: absolute; top: 10px; right: 10px; padding: 5px 10px; background: rgba(0,0,0,0.5); color: white; cursor: pointer; border-radius: 5px; z-index: 10;">
+        <svg xmlns="https://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevrons-right-icon lucide-chevrons-right"><path d="m6 17 5-5-5-5"></path><path d="m13 17 5-5-5-5"></path></svg>
+    </div>
+
+    <style>
+        @keyframes shake-rotate {
+            0%, 10%, 70%, 100% { transform: translateX(0) rotate(0deg); }
+            20%, 30%, 40%, 50%, 60% { transform: translateX(-1px) rotate(-5deg); }
+            15%, 25%, 35%, 45%, 55% { transform: translateX(1px) rotate(5deg); }
+        }
+
+        #mute-button-wrapper {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+
+            /* padding: 6px; */
+        }
+        
+        #cta-video-button {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #007AFF 0%, #005FCC 50%, #004499 100%);
+            color: white;
+            cursor: pointer;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 15px rgba(0,122,255,0.4), 0 2px 8px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.2);
+            animation: shake-rotate 1.5s ease-in-out infinite;
+            transform-origin: center;
+            transition: all 0.2s ease;
+            z-index: 10;
+        }
+        
+        #cta-video-button:hover {
+            background: linear-gradient(135deg, #0056CC 0%, #004499 50%, #003366 100%);
+            box-shadow: 0 6px 20px rgba(0,122,255,0.5), 0 3px 10px rgba(0,0,0,0.3);
+            animation-play-state: paused;
+            transform: translateY(-1px) scale(1.05);
+        }
+        
+        #cta-video-button:active {
+            transform: translateY(0) scale(0.95);
+            box-shadow: 0 2px 8px rgba(0,122,255,0.3), 0 1px 4px rgba(0,0,0,0.2);
+        }
+        
+        #cta-button:hover {
+            background: linear-gradient(135deg, #0056CC 0%, #004499 50%, #003366 100%);
+            box-shadow: 0 8px 25px rgba(0,122,255,0.5), 0 4px 12px rgba(0,0,0,0.3);
+            animation-play-state: paused;
+            transform: translateY(-2px) scale(1.1);
+        }
+        
+        #cta-button:active {
+            transform: translateY(0) scale(0.95);
+            box-shadow: 0 4px 15px rgba(0,122,255,0.3), 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        @keyframes popover-slide-bounce {
+            0% { transform: translate(-140%, -50%) scale(0.8); opacity: 0; }
+            60% { transform: translate(6%, -50%) scale(1.05); opacity: 1; }
+            100% { transform: translate(0, -50%) scale(1); opacity: 1; }
+        }
+
+        #video-popover {
+            position: absolute;
+            top: 70%;
+            left: 15px;
+            width: 50px;
+            height: 50px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transform: translate(-140%, -50%);
+            z-index: 11;
+            cursor: pointer;
+        }
+
+        #video-popover.visible {
+            animation: popover-slide-bounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        #video-popover-close {
+            position: absolute;
+            z-index: 99;
+            top: 0;
+            right: 0;
+            width: var(--popover-close-size);
+            height: var(--popover-close-size);
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: var(--popover-close-font);
+            line-height: var(--popover-close-size);
+            padding: 0;
+        }
+
+        #video-popover-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            pointer-events: none;
+            animation: shake-rotate 1.5s ease-in-out infinite;
+        }
+
+        #coupon-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 1;
+            background: rgba(0, 0, 0, 0.25);
+        }
+
+        #landing-page {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        #cta-hand-hint {
+            position: absolute;
+            bottom: 10%;
+            left: 50%;
+            width: 88px;
+            height: 140px;
+            z-index: 2;
+            pointer-events: none;
+            transform-origin: top left;
+        }
+
+        #cta-hand-hint .cta-hand-icon {
+            position: absolute;
+            top: 0;
+            left: -7px;
+            width: 88px;
+            height: 88px;
+            background: url("https://oam-emp-init.obs.ap-southeast-3.myhuaweicloud.com/adserver-image/20251014-173932.webp") no-repeat center / contain;
+            animation: hand-bounce 0.9s ease-in-out infinite;
+            transform-origin: top left;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        #cta-hand-hint .cta-hand-ripple {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 4px solid rgba(255, 255, 255, 0.85);
+            box-shadow: 0 0 26px rgba(255, 255, 255, 0.45);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 65%);
+            transform: translate(-50%, -50%) scale(0.55);
+            opacity: 0;
+            pointer-events: none;
+            animation: hand-ripple 0.9s ease-out infinite;
+            z-index: 0;
+        }
+
+        #cta-hand-hint .cta-hand-label {
+            position: absolute;
+            top: 104px;
+            left: 0;
+            transform: translateX(-50%);
+            padding: 6px 14px;
+            color: #fff;
+            font-size: 28px;
+            font-weight: 600;
+            font-family: 'Balsamiq Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            letter-spacing: 0.4px;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        @keyframes hand-bounce {
+            0%, 100% { transform: scale(0.9); opacity: 0.85; }
+            50% { transform: scale(1.08); opacity: 1; }
+        }
+
+        @keyframes hand-ripple {
+            0% {
+                transform: translate(-50%, -50%) scale(0.35);
+                opacity: 0;
+            }
+            35% {
+                opacity: 0.85;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1.35);
+                opacity: 0;
+            }
+        }
+
+        .coupon-item {
+            position: absolute;
+            top: -140px;
+            width: var(--coupon-width);
+            height: var(--coupon-height);
+            background: url('https://oam-emp-init.obs.ap-southeast-3.myhuaweicloud.com/adserver-image/20251014-173915.png') no-repeat center / contain;
+            border-radius: 8px;
+            animation: coupon-fall linear forwards;
+            --coupon-tilt: 15deg;
+            --coupon-end-offset: 0px;
+            pointer-events: auto;
+            cursor: pointer;
+        }
+
+        @keyframes coupon-fall {
+            0% { transform: translate3d(0, 0, 0) rotate(calc(var(--coupon-tilt) * -0.4)); opacity: 0; }
+            10% { opacity: 1; }
+            100% { transform: translate3d(var(--coupon-end-offset), 120vh, 0) rotate(var(--coupon-tilt)); opacity: 0; }
+        }
+    
+
+
+/* 自适应变量与兜底层 */
+:root {
+    --control-gap: 12px;
+    --control-pad: 6px;
+    --control-side: 10px;
+    --control-top: 10px;
+    --control-radius: 5px;
+    --icon-size: 24px;
+    --btn-padding-v: 5px;
+    --btn-padding-h: 10px;
+    --cta-padding: 12px 20px;
+    --cta-font-size: 14px;
+    --cta-bottom: 15px;
+    --cta-right: 15px;
+    --cta-radius: 10px;
+    --video-width: 100%;
+    --video-height: 100%;
+    --video-max-width: 100%;
+    --video-max-height: 100%;
+    --popover-size: 50px;
+    --popover-close-size: 12px;
+    --popover-close-font: 16px;
+    --coupon-width: 64px;
+    --coupon-height: 90px;
+    --hint-width: 88px;
+    --hint-height: 140px;
+    --hint-bottom: 10%;
+    --hint-label-size: 28px;
+}
+
+#ad-video-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: blur(12px) brightness(0.6);
+    transform: scale(1.05);
+    z-index: 0;
+    pointer-events: none;
+}
+
+#ad-video {
+    position: absolute !important;
+    inset: 0 !important;
+    margin: auto;
+    width: var(--video-width) !important;
+    height: var(--video-height) !important;
+    max-width: var(--video-max-width);
+    max-height: var(--video-max-height);
+    object-fit: contain !important;
+    z-index: 1;
+    background: transparent;
+}
+
+#mute-button-wrapper {
+    padding: var(--control-pad) !important;
+    top: var(--control-top) !important;
+    left: var(--control-side) !important;
+    z-index: 10;
+}
+
+#mute-button {
+    padding: var(--btn-padding-v) var(--btn-padding-h) !important;
+    border-radius: var(--control-radius) !important;
+}
+
+#mute-button svg,
+#skip-button svg {
+    width: var(--icon-size) !important;
+    height: var(--icon-size) !important;
+}
+
+#skip-button {
+    top: var(--control-top) !important;
+    right: var(--control-side) !important;
+    padding: var(--control-pad) !important;
+    border-radius: var(--control-radius) !important;
+    z-index: 10;
+}
+
+#cta-video-button {
+    bottom: var(--cta-bottom);
+    right: var(--cta-right);
+    padding: var(--cta-padding);
+    font-size: var(--cta-font-size);
+    border-radius: var(--cta-radius) !important;
+}
+
+#video-popover {
+    width: var(--popover-size);
+    height: var(--popover-size);
+}
+
+#cta-hand-hint {
+    bottom: var(--hint-bottom);
+    width: var(--hint-width);
+    height: var(--hint-height);
+}
+
+#cta-hand-hint .cta-hand-label {
+    font-size: var(--hint-label-size);
+}
+
+/* 320–360 宽 & 594–700 高：紧凑 */
+@media (max-width: 360px) and (max-height: 700px) {
+    :root {
+        --control-gap: 8px;
+        --control-pad: 5px;
+        --control-side: 8px;
+        --control-top: 8px;
+        --cta-padding: 10px 16px;
+        --cta-font-size: 12px;
+        --cta-bottom: 12px;
+        --cta-right: 12px;
+        --video-width: 100%;
+        --video-height: 100%;
+        --video-max-width: 100%;
+        --video-max-height: 100%;
+        --popover-size: 44px;
+        --hint-width: 72px;
+        --hint-height: 110px;
+        --hint-bottom: 12%;
+        --hint-label-size: 22px;
+    }
+}
+
+/* 360–384 宽或高 ≥ 740：中档 */
+@media ((min-width: 360px) and (max-width: 384px)), (min-height: 740px) {
+    :root {
+        --control-gap: 10px;
+        --control-pad: 6px;
+        --control-side: 10px;
+        --control-top: 10px;
+        --cta-padding: 12px 18px;
+        --cta-font-size: 13px;
+        --cta-bottom: 14px;
+        --cta-right: 14px;
+        --video-width: 100%;
+        --video-height: 100%;
+        --video-max-width: 100%;
+        --video-max-height: 100%;
+        --popover-size: 48px;
+        --hint-width: 80px;
+        --hint-height: 124px;
+        --hint-bottom: 11%;
+        --hint-label-size: 24px;
+    }
+}
+
+/* 384–432 宽且 800–876 高：正常尺寸 */
+@media (min-width: 384px) and (max-width: 432px) and (min-height: 800px) and (max-height: 876px) {
+    :root {
+        --control-gap: 12px;
+        --control-pad: 6px;
+        --control-side: 12px;
+        --control-top: 12px;
+        --cta-padding: 14px 20px;
+        --cta-font-size: 14px;
+        --cta-bottom: 16px;
+        --cta-right: 16px;
+        --video-width: 100%;
+        --video-height: 100%;
+        --video-max-width: 100%;
+        --video-max-height: 100%;
+        --popover-size: 52px;
+        --hint-width: 90px;
+        --hint-height: 140px;
+        --hint-bottom: 10%;
+        --hint-label-size: 26px;
+    }
+}
+
+/* 矮屏或横屏：整体压缩与安全边距 */
+@media (max-height: 620px), (orientation: landscape) {
+    :root {
+        --control-gap: 8px;
+        --control-pad: 5px;
+        --control-side: 8px;
+        --control-top: 8px;
+        --icon-size: 20px;
+        --cta-padding: 10px 16px;
+        --cta-font-size: 12px;
+        --cta-bottom: 10px;
+        --cta-right: 10px;
+        --cta-radius: 8px;
+        --video-width: 100%;
+        --video-height: 100%;
+        --video-max-width: 100%;
+        --video-max-height: 100%;
+        --popover-size: 42px;
+        --hint-width: 64px;
+        --hint-height: 96px;
+        --hint-bottom: 8%;
+        --hint-label-size: 20px;
+    }
+}
+
+/* 极小尺寸：宽度 < 150px 时 */
+@media (max-width: 150px) {
+    :root {
+        --control-gap: 4px;
+        --control-pad: 2px;
+        --control-side: 4px;
+        --control-top: 4px;
+        --control-radius: 3px;
+        --icon-size: 14px;
+        --btn-padding-v: 2px;
+        --btn-padding-h: 4px;
+        --cta-padding: 4px 8px;
+        --cta-font-size: 8px;
+        --cta-bottom: 6px;
+        --cta-right: 6px;
+        --cta-radius: 5px;
+        --video-width: 100%;
+        --video-height: 100%;
+        --video-max-width: 100%;
+        --video-max-height: 100%;
+        --popover-size: 28px;
+        --popover-close-size: 8px;
+        --popover-close-font: 10px;
+        --coupon-width: 32px;
+        --coupon-height: 45px;
+        --hint-width: 36px;
+        --hint-height: 54px;
+        --hint-bottom: 6%;
+        --hint-label-size: 10px;
+    }
+
+    #cta-video-button {
+        box-shadow: 0 2px 6px rgba(0,122,255,0.3), 0 1px 3px rgba(0,0,0,0.15) !important;
+    }
+}
+
+/* 极小尺寸：高度 < 300px 时 */
+@media (max-height: 300px) {
+    :root {
+        --control-gap: 4px;
+        --control-pad: 2px;
+        --control-side: 4px;
+        --control-top: 4px;
+        --control-radius: 3px;
+        --icon-size: 14px;
+        --btn-padding-v: 2px;
+        --btn-padding-h: 4px;
+        --cta-padding: 4px 8px;
+        --cta-font-size: 8px;
+        --cta-bottom: 6px;
+        --cta-right: 6px;
+        --cta-radius: 5px;
+        --video-width: 100%;
+        --video-height: 100%;
+        --video-max-width: 100%;
+        --video-max-height: 100%;
+        --popover-size: 28px;
+        --popover-close-size: 8px;
+        --popover-close-font: 10px;
+        --coupon-width: 32px;
+        --coupon-height: 45px;
+        --hint-width: 36px;
+        --hint-height: 54px;
+        --hint-bottom: 6%;
+        --hint-label-size: 10px;
+    }
+
+    #cta-video-button {
+        box-shadow: 0 2px 6px rgba(0,122,255,0.3), 0 1px 3px rgba(0,0,0,0.15) !important;
+    }
+}
+
+/* 超小尺寸：宽度 < 120px 或高度 < 200px */
+@media (max-width: 120px), (max-height: 200px) {
+    :root {
+        --control-gap: 2px;
+        --control-pad: 1px;
+        --control-side: 2px;
+        --control-top: 2px;
+        --control-radius: 2px;
+        --icon-size: 12px;
+        --btn-padding-v: 1px;
+        --btn-padding-h: 3px;
+        --cta-padding: 3px 6px;
+        --cta-font-size: 7px;
+        --cta-bottom: 4px;
+        --cta-right: 4px;
+        --cta-radius: 4px;
+        --popover-size: 20px;
+        --popover-close-size: 6px;
+        --popover-close-font: 8px;
+        --coupon-width: 24px;
+        --coupon-height: 34px;
+    }
+
+    #cta-video-button {
+        box-shadow: 0 1px 4px rgba(0,122,255,0.25) !important;
+        animation: none !important;
+    }
+
+    #mute-button,
+    #skip-button {
+        background: rgba(0,0,0,0.4) !important;
+    }
+}
+
+</style>
+
+    <div id="video-popover" role="button" aria-label="Open landing page">
+        <button id="video-popover-close" type="button" aria-label="Close popover">&times;</button>
+        <img id="video-popover-img" src="https://oam-emp-init.obs.ap-southeast-3.myhuaweicloud.com/adserver-image/20251014-173915.png" alt="Promo">
+    </div>
+
+    
+    <div id="video-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; cursor: pointer;"></div>
+    
+    
+    <div id="cta-video-button">View Now</div>
+
+    <div id="landing-page" data-bg="https://oam-emp-init.obs.ap-southeast-3.myhuaweicloud.com/adserver-image/adserver-image.jpg">
+        <div id="coupon-container"></div>
+        <div id="cta-hand-hint" aria-hidden="true">
+            <div class="cta-hand-ripple" aria-hidden="true"></div>
+            <div class="cta-hand-icon" aria-hidden="true"></div>
+            <div class="cta-hand-label">Click To Get Discount</div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" id="er_p_c">var video = document.getElementById("ad-video"), videoOverlay = document.getElementById("video-overlay"), landingPage = document.getElementById("landing-page"), ctaVideoButton = document.getElementById("cta-video-button"), skipButton = document.getElementById("skip-button"), muteButtonWrapper = document.getElementById("mute-button-wrapper"), muteButton = document.getElementById("mute-button"), videoPopover = document.getElementById("video-popover"), popoverCloseButton = document.getElementById("video-popover-close"), couponContainer = document.getElementById("coupon-container"), landingUrl = "{LANDING_URL}", overlayLandingUrl = "{OVERLAY_LANDING_URL}", landingBackgroundUrl = landingPage ? landingPage.getAttribute("data-bg") : "", landingBackgroundPreloaded = !1, skipTime = 5e3, skipTimer = null, videoStartTime = null, videoPausedDuration = 0, lastPauseTime = null, popoverDismissed = !1, couponInterval = null, couponActive = !1, couponBurstPhase = !1, videoRemoved = !1, firstFrameReported = !1, lastFrameReported = !1, playingFinishedReported = !1, latestLcpRelativeTime = null, fcpObserver = null, lcpObserver = null, moduleTypeMap = {
+    mute: {
+        type: "mute",
+        domId: "mute-button-wrapper"
+    },
+    overlay: {
+        type: "overlay",
+        domId: "video-overlay"
+    },
+    videoCta: {
+        type: "videoCta",
+        domId: "cta-video-button"
+    },
+    landingCta: {
+        type: "landingCta",
+        domId: "landing-page"
+    },
+    skip: {
+        type: "skip",
+        domId: "skip-button"
+    },
+    popover: {
+        type: "popover",
+        domId: "video-popover"
+    },
+    coupon: {
+        type: "coupon",
+        domId: "coupon-container"
+    }
+};
+
+function cleanupVideo() {
+    if (!videoRemoved) {
+        if (video) {
+            try {
+                video.pause();
+            } catch (e) {}
+            if (video.removeAttribute("src"), "function" == typeof video.load) try {
+                video.load();
+            } catch (e) {}
+            video.parentNode && video.parentNode.removeChild(video);
+        }
+        videoRemoved = !0, video = null;
+    }
+}
+
+function showPopover() {
+    popoverDismissed || (videoPopover.style.display = "flex", videoPopover.classList.remove("visible"), 
+    videoPopover.offsetWidth, videoPopover.classList.add("visible"));
+}
+
+function hidePopover() {
+    videoPopover.style.display = "none", videoPopover.classList.remove("visible");
+}
+
+function createCoupon() {
+    if (couponContainer && couponActive) {
+        var e = couponBurstPhase ? 25 : 12;
+        if (!(couponContainer.children.length >= e)) {
+            var n = document.createElement("div");
+            n.className = "coupon-item";
+            var t = 15 + 70 * Math.random();
+            n.style.left = "calc(" + t.toFixed(2) + "% - 32px)";
+            var o = 2.5 + 2 * Math.random();
+            n.style.animationDuration = o + "s", n.style.animationDelay = (.3 * Math.random()).toFixed(2) + "s", 
+            n.style.setProperty("--coupon-tilt", (50 * Math.random() - 25).toFixed(2) + "deg"), 
+            n.style.setProperty("--coupon-end-offset", (60 * Math.random() - 30).toFixed(2) + "px"), 
+            n.addEventListener("click", handleCouponClick), couponContainer.appendChild(n), 
+            setTimeout(function() {
+                n.parentNode === couponContainer && couponContainer.removeChild(n);
+            }, 1e3 * o + 300);
+        }
+    }
+}
+
+function handleCouponClick(e) {
+    e.stopPropagation();
+    var n = e.currentTarget;
+    n && n.parentNode === couponContainer && couponContainer.removeChild(n), sendAnalytics("companionad_module", {
+        clickType: moduleTypeMap.coupon.type,
+        clickDomId: moduleTypeMap.coupon.domId
+    }), landingUrl && landingUrl.trim() && (openLink(landingUrl), cleanupVideo());
+}
+
+function scheduleNextCoupon() {
+    if (couponActive) {
+        createCoupon();
+        var e = 180 + 140 * Math.random();
+        couponInterval = setTimeout(scheduleNextCoupon, e);
+    }
+}
+
+function startCouponRain() {
+    if (couponContainer) {
+        stopCouponRain(), couponActive = !0, couponBurstPhase = !0;
+        for (var e = 0; e < 8; e++) {
+            var n = 120 * e + 80 * Math.random();
+            setTimeout(createCoupon, n);
+        }
+        setTimeout(function() {
+            couponBurstPhase = !1;
+        }, 5e3), setTimeout(function() {
+            couponActive && scheduleNextCoupon();
+        }, 800);
+    }
+}
+
+function stopCouponRain() {
+    couponActive = !1, couponBurstPhase = !1, couponInterval && (clearTimeout(couponInterval), 
+    couponInterval = null), couponContainer && (couponContainer.innerHTML = "");
+}
+
+function applyLandingBackground() {
+    landingPage && landingBackgroundUrl && (landingPage.style.backgroundImage = "url(" + landingBackgroundUrl + ")");
+}
+
+function preloadLandingBackground() {
+    if (landingBackgroundUrl && (applyLandingBackground(), !landingBackgroundPreloaded)) {
+        landingBackgroundPreloaded = !0;
+        var e = new Image;
+        e.decoding = "async", e.src = landingBackgroundUrl, e.complete || (e.onload = applyLandingBackground, 
+        e.onerror = function() {
+            landingBackgroundPreloaded = !1;
+        });
+    }
+}
+
+function handleVideoFirstPlay() {
+    preloadLandingBackground(), video && video.removeEventListener("play", handleVideoFirstPlay);
+}
+
+function sendAnalytics(e, n) {
+    
+}
+
+function getPerformanceTimeOrigin() {
+    return "undefined" == typeof performance ? null : "number" == typeof performance.timeOrigin ? performance.timeOrigin : performance.timing && "number" == typeof performance.timing.navigationStart ? performance.timing.navigationStart : null;
+}
+
+function toAbsoluteTimestamp(e) {
+    var n = getPerformanceTimeOrigin();
+    return null === n || "number" != typeof e ? null : n + e;
+}
+
+function getCurrentAbsoluteTimestamp() {
+    if ("undefined" != typeof performance && "function" == typeof performance.now) {
+        var e = toAbsoluteTimestamp(performance.now());
+        if ("number" == typeof e && !isNaN(e)) return e;
+    }
+    return Date.now();
+}
+
+function reportFirstFrameTimestamp(e) {
+    if (!firstFrameReported) {
+        var n = "number" == typeof e ? toAbsoluteTimestamp(e) : null;
+        if (null === n && (n = getCurrentAbsoluteTimestamp()), firstFrameReported = !0, 
+        sendAnalytics("companionad_fcp", {
+            timestamp: String(Math.round(n))
+        }), fcpObserver) {
+            try {
+                fcpObserver.disconnect();
+            } catch (e) {}
+            fcpObserver = null;
+        }
+    }
+}
+
+function initFcpTracking() {
+    if ("undefined" != typeof performance) {
+        var e = !1;
+        if ("function" == typeof performance.getEntriesByName) try {
+            var n = performance.getEntriesByName("first-contentful-paint");
+            n && n.length && (reportFirstFrameTimestamp(n[0].startTime), e = !0);
+        } catch (e) {}
+        if (!e && !firstFrameReported) if ("function" == typeof PerformanceObserver) {
+            try {
+                (fcpObserver = new PerformanceObserver(function(e) {
+                    var n = e.getEntries();
+                    if (n && n.length) for (var t = 0; t < n.length; t++) if ("first-contentful-paint" === n[t].name) {
+                        reportFirstFrameTimestamp(n[t].startTime);
+                        break;
+                    }
+                })).observe({
+                    type: "paint",
+                    buffered: !0
+                });
+            } catch (e) {
+                reportFirstFrameTimestamp("function" == typeof performance.now ? performance.now() : void 0);
+            }
+            setTimeout(function() {
+                firstFrameReported || reportFirstFrameTimestamp("function" == typeof performance.now ? performance.now() : void 0);
+            }, 5e3);
+        } else reportFirstFrameTimestamp("function" == typeof performance.now ? performance.now() : void 0);
+    } else reportFirstFrameTimestamp();
+}
+
+function updateLatestLcpEntry(e) {
+    e && "number" == typeof e.startTime && (latestLcpRelativeTime = e.startTime);
+}
+
+function initLcpTracking() {
+    if ("function" == typeof PerformanceObserver) {
+        try {
+            (lcpObserver = new PerformanceObserver(function(e) {
+                var n = e.getEntries();
+                n && n.length && updateLatestLcpEntry(n[n.length - 1]);
+            })).observe({
+                type: "largest-contentful-paint",
+                buffered: !0
+            });
+        } catch (e) {}
+        document.addEventListener("visibilitychange", function() {
+            "hidden" === document.visibilityState && (flushLcpObserver(), reportLastFrameTimestamp());
+        }, {
+            once: !0
+        });
+    }
+}
+
+function setupLcpReportOnRenderComplete() {
+    function e() {
+        lastFrameReported || ("function" == typeof requestAnimationFrame ? requestAnimationFrame(function() {
+            requestAnimationFrame(reportLastFrameTimestamp);
+        }) : setTimeout(reportLastFrameTimestamp, 0));
+    }
+    "complete" !== document.readyState ? window.addEventListener("load", function n() {
+        window.removeEventListener("load", n), e();
+    }) : e();
+}
+
+function reportLastFrameTimestamp() {
+    if (!lastFrameReported) {
+        flushLcpObserver();
+        var e = null !== latestLcpRelativeTime ? toAbsoluteTimestamp(latestLcpRelativeTime) : null;
+        if (null === e && (e = getCurrentAbsoluteTimestamp()), lastFrameReported = !0, sendAnalytics("companionad_lcp", {
+            timestamp: String(Math.round(e))
+        }), lcpObserver) {
+            try {
+                lcpObserver.disconnect();
+            } catch (e) {}
+            lcpObserver = null;
+        }
+    }
+}
+
+function flushLcpObserver() {
+    if (lcpObserver) try {
+        var e = "function" == typeof lcpObserver.takeRecords ? lcpObserver.takeRecords() : null;
+        e && e.length && updateLatestLcpEntry(e[e.length - 1]);
+    } catch (e) {}
+}
+
+function reportVideoFinished() {
+    playingFinishedReported || (playingFinishedReported = !0, sendAnalytics("companionad_playing_finished", {
+        finished: "true"
+    }));
+}
+
+var performanceTrackingInitialized = !1;
+
+function initPerformanceTracking() {
+    initFcpTracking(), initLcpTracking(), setupLcpReportOnRenderComplete();
+}
+
+function getVideoPlayDuration() {
+    if (null === videoStartTime) return 0;
+    var e = Date.now(), n = e - videoStartTime, t = 0;
+    return (!video || video.paused) && null !== lastPauseTime && (t = e - lastPauseTime), 
+    n - videoPausedDuration - t;
+}
+
+function isValidUrl(e) {
+    try {
+        new URL(e);
+        return !0;
+    } catch {
+        return !1;
+    }
+}
+
+function getClickCoordinates(e) {
+    var n = e.target.getBoundingClientRect();
+    return {
+        x: String(Math.round(e.clientX - n.left)),
+        y: String(Math.round(e.clientY - n.top)),
+        absoluteX: String(Math.round(e.clientX)),
+        absoluteY: String(Math.round(e.clientY))
+    };
+}
+
+function getEventPath(e) {
+    if ("function" == typeof e.composedPath) return e.composedPath();
+    if (e.path && e.path.length) return e.path;
+    for (var n = [], t = e.target; t; ) n.push(t), t = t.parentElement;
+    return n.push(document, window), n;
+}
+
+function shouldIgnoreOverlayClick(e) {
+    for (var n = getEventPath(e), t = [ muteButton, muteButtonWrapper, skipButton, ctaVideoButton, videoPopover, popoverCloseButton ].filter(Boolean), o = 0; o < t.length; o++) if (-1 !== n.indexOf(t[o])) return !0;
+    return !1;
+}
+
+function openLink(e) {
+    window.open(e, "_blank"), sendAnalytics("companionad_jump", {});
+    const n = getVideoPlayDuration();
+    sendAnalytics("companionad_jumptiming", {
+        playDuration: String(n)
+    });
+}
+
+function handleMuteButtonClick(e) {
+    e.stopPropagation(), video && muteButton && (video.muted ? (video.muted = !1, muteButton.innerHTML = '\n                <svg xmlns="https://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-volume2-icon lucide-volume-2">\n                    <path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"/>\n                    <path d="M16 9a5 5 0 0 1 0 6"/><path d="M19.364 18.364a9 9 0 0 0 0-12.728"/>\n                </svg>\n            ') : (video.muted = !0, 
+    muteButton.innerHTML = '\n                <svg xmlns="https://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-volume-off-icon lucide-volume-off">\n                    <path d="M16 9a5 5 0 0 1 .95 2.293"/>\n                    <path d="M19.364 5.636a9 9 0 0 1 1.889 9.96"/>\n                    <path d="m2 2 20 20"/>\n                    <path d="m7 7-.587.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298V11"/>\n                    <path d="M9.828 4.172A.686.686 0 0 1 11 4.657v.686"/>\n                </svg>\n            '), 
+    sendAnalytics("companionad_module", {
+        clickType: moduleTypeMap.mute.type,
+        clickDomId: moduleTypeMap.mute.domId
+    }));
+}
+
+function showLandingPage(e) {
+    if (video) {
+        try {
+            video.pause();
+        } catch (e) {}
+        video.style.display = "none";
+    }
+    videoOverlay && (videoOverlay.style.display = "none"), skipButton && (skipButton.style.display = "none"), 
+    muteButtonWrapper && (muteButtonWrapper.style.display = "none"), muteButton && (muteButton.style.display = "none"), 
+    ctaVideoButton && (ctaVideoButton.style.display = "none"), hidePopover(), preloadLandingBackground(), 
+    startCouponRain(), landingPage && (landingPage.style.display = "flex"), skipTimer && (clearTimeout(skipTimer), 
+    skipTimer = null), cleanupVideo(), e && setTimeout(function() {
+        openLink(landingUrl);
+    }, 200);
+}
+
+initPerformanceTracking(), video.addEventListener("play", handleVideoFirstPlay), 
+video && !video.paused && preloadLandingBackground(), video.addEventListener("play", function() {
+    skipTimer && clearTimeout(skipTimer), skipTimer = setTimeout(function() {
+        skipButton.style.display = "flex";
+    }, skipTime), null === videoStartTime && (videoStartTime = Date.now()), null !== lastPauseTime && (videoPausedDuration += Date.now() - lastPauseTime, 
+    lastPauseTime = null), stopCouponRain(), showPopover();
+}), video.addEventListener("pause", function() {
+    skipTimer && (clearTimeout(skipTimer), skipTimer = null), lastPauseTime = Date.now();
+}), popoverCloseButton.addEventListener("click", function(e) {
+    e.stopPropagation(), popoverDismissed = !0, hidePopover();
+}), videoPopover.addEventListener("click", function() {
+    landingUrl && landingUrl.trim() && (sendAnalytics("companionad_module", {
+        clickType: moduleTypeMap.popover.type,
+        clickDomId: moduleTypeMap.popover.domId
+    }), openLink(landingUrl), cleanupVideo(), showLandingPage(!1));
+}), overlayLandingUrl && isValidUrl(overlayLandingUrl) && videoOverlay.addEventListener("click", function(e) {
+    shouldIgnoreOverlayClick(e) || e.target === videoOverlay && (sendAnalytics("companionad_clickposition", getClickCoordinates(e)), 
+    sendAnalytics("companionad_module", {
+        clickType: moduleTypeMap.overlay.type,
+        clickDomId: moduleTypeMap.overlay.domId
+    }), openLink(overlayLandingUrl), cleanupVideo(), showLandingPage(!1));
+}), muteButtonWrapper ? muteButtonWrapper.addEventListener("click", handleMuteButtonClick) : muteButton && muteButton.addEventListener("click", handleMuteButtonClick), 
+video.addEventListener("ended", function() {
+    var e = getVideoPlayDuration();
+    sendAnalytics("companionad_duration", {
+        playDuration: String(e)
+    }), reportVideoFinished(), showLandingPage(!1);
+}), skipButton.addEventListener("click", function(e) {
+    e.stopPropagation(), showLandingPage(!1), sendAnalytics("companionad_module", {
+        clickType: moduleTypeMap.skip.type,
+        clickDomId: moduleTypeMap.skip.domId
+    });
+}), landingPage.addEventListener("click", function() {
+    landingUrl && landingUrl.trim() && openLink(landingUrl);
+}), ctaVideoButton.addEventListener("click", function(e) {
+    e.stopPropagation();
+    var n = getVideoPlayDuration(), t = getClickCoordinates(e);
+    sendAnalytics("companionad_clicktiming", {
+        playDuration: String(n)
+    }), sendAnalytics("companionad_clickposition", t), sendAnalytics("companionad_module", {
+        clickType: moduleTypeMap.videoCta.type,
+        clickDomId: moduleTypeMap.videoCta.domId
+    }), showLandingPage(!0);
+})</script>

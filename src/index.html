@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VAST Companion Ad Playground</title>
+  <link rel="stylesheet" href="styles.css">
+  <!-- Google IMA SDK -->
+  <script src="https://imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
+</head>
+<body>
+  <div class="playground-container">
+    <!-- Header -->
+    <header class="playground-header">
+      <h1>🎬 VAST Companion Ad Playground</h1>
+      <p class="subtitle">伴随广告模板预览工具</p>
+    </header>
+
+    <main class="playground-main">
+      <!-- Left Panel: Configuration -->
+      <aside class="config-panel">
+        <section class="config-section">
+          <h2>📝 模板配置</h2>
+          
+          <!-- Template Load Options -->
+          <div class="form-group">
+            <label>加载模板</label>
+            <div class="template-load-options">
+              <button type="button" id="btn-load-file" class="btn btn-small btn-outline">📁 选择文件</button>
+              <input type="file" id="file-input" accept=".html,.htm" style="display: none;">
+              <div class="url-load-group">
+                <input type="url" id="template-url" placeholder="输入模板 URL...">
+                <button type="button" id="btn-load-url" class="btn btn-small btn-outline">加载</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Template Editor -->
+          <div class="form-group">
+            <label for="template-editor">伴随广告 HTML</label>
+            <textarea id="template-editor" placeholder="在此输入或粘贴伴随广告模板 HTML，或使用上方按钮加载..."></textarea>
+          </div>
+
+          <!-- Detected Macros -->
+          <div class="form-group" id="macros-container" style="display: none;">
+            <label>检测到的宏变量</label>
+            <div id="macros-list"></div>
+          </div>
+        </section>
+
+        <section class="config-section">
+          <h2>🎥 视频配置</h2>
+          <div class="form-group">
+            <label for="video-url">广告视频 URL</label>
+            <input type="url" id="video-url" placeholder="https://example.com/ad-video.mp4" 
+                   value="https://storage.googleapis.com/gvabox/media/samples/stock.mp4">
+          </div>
+          <div class="form-group">
+            <label for="video-duration">视频时长（秒）</label>
+            <input type="number" id="video-duration" value="30" min="1" max="300">
+          </div>
+        </section>
+
+        <section class="config-section">
+          <details class="config-details" id="advanced-config">
+            <summary>🛠️ 高级配置 (完整模式)</summary>
+            <div class="config-details-content">
+              <div class="form-group">
+                <label>预览模式</label>
+                <div class="radio-group">
+                  <label class="radio-label">
+                    <input type="radio" name="preview-mode" value="simplified" checked> 简化模式
+                  </label>
+                  <label class="radio-label">
+                    <input type="radio" name="preview-mode" value="full"> 完整模式
+                  </label>
+                </div>
+              </div>
+
+              <div id="full-mode-options" style="display: none;">
+                <div class="form-group">
+                  <label for="content-video-url">内容视频 URL (正片)</label>
+                  <input type="url" id="content-video-url" value="https://storage.googleapis.com/gvabox/media/samples/android.mp4" placeholder="https://example.com/content.mp4">
+                </div>
+
+                <div class="form-group">
+                  <label for="ad-break-type">广告插入时机</label>
+                  <select id="ad-break-type">
+                    <option value="preroll">Pre-roll (片头)</option>
+                    <option value="midroll">Mid-roll (片中)</option>
+                    <option value="postroll">Post-roll (片尾)</option>
+                  </select>
+                </div>
+
+                <div class="form-group" id="midroll-time-group" style="display: none;">
+                  <label for="midroll-time">Mid-roll 时间点 (秒)</label>
+                  <input type="number" id="midroll-time" value="5" min="1">
+                </div>
+              </div>
+            </div>
+          </details>
+        </section>
+
+        <section class="config-section">
+          <h2>📐 伴随广告尺寸</h2>
+          <div class="form-group">
+            <label for="size-preset">预设尺寸 (IAB 标准)</label>
+            <select id="size-preset">
+              <option value="300x250" selected>300 × 250 (Medium Rectangle)</option>
+              <option value="728x90">728 × 90 (Leaderboard)</option>
+              <option value="300x600">300 × 600 (Half Page)</option>
+              <option value="160x600">160 × 600 (Wide Skyscraper)</option>
+              <option value="320x50">320 × 50 (Mobile Leaderboard)</option>
+              <option value="320x480">320 × 480 (Mobile Interstitial)</option>
+              <option value="480x320">480 × 320 (Mobile Interstitial)</option>
+              <option value="custom">自定义</option>
+            </select>
+          </div>
+          <div class="form-group custom-size" id="custom-size-group" style="display: none;">
+            <div class="size-inputs">
+              <input type="number" id="custom-width" placeholder="宽度" min="1" max="2000">
+              <span>×</span>
+              <input type="number" id="custom-height" placeholder="高度" min="1" max="2000">
+            </div>
+          </div>
+        </section>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button id="btn-generate-vast" class="btn btn-secondary">生成 VAST XML</button>
+          <button id="btn-preview" class="btn btn-primary">▶️ 预览广告</button>
+        </div>
+      </aside>
+
+      <!-- Right Panel: Preview -->
+      <section class="preview-panel">
+        <div class="preview-tabs">
+          <button class="tab-btn active" data-tab="preview">预览</button>
+          <button class="tab-btn" data-tab="vast-xml">VAST XML</button>
+        </div>
+
+        <!-- Preview Tab -->
+        <div class="tab-content active" id="tab-preview">
+          <div class="preview-frame-container">
+            <div class="preview-layout">
+              <!-- Video Player (Linear Ad) -->
+              <div class="video-player-wrapper">
+                <h3>主广告 (Linear Ad)</h3>
+                <div id="video-container">
+                  <video id="content-video" playsinline></video>
+                  <div id="ad-container"></div>
+                </div>
+              </div>
+              
+              <!-- Companion Ad Slot -->
+              <div class="companion-slot-wrapper">
+                <h3>伴随广告 (Companion Ad)</h3>
+                <div id="companion-slot-container">
+                  <!-- Resizable Wrapper -->
+                  <div id="companion-resizable-wrapper">
+                    <div id="companion-slot">
+                      <div class="companion-placeholder">
+                        <p>伴随广告将在这里显示</p>
+                      </div>
+                    </div>
+                    
+                    <!-- Resize Handles -->
+                    <div class="resize-handle handle-e" data-direction="e"></div>
+                    <div class="resize-handle handle-s" data-direction="s"></div>
+                    <div class="resize-handle handle-se" data-direction="se"></div>
+                    
+                    <!-- Size Indicator (Hidden by default, shown during drag) -->
+                    <div class="resize-indicator">300 × 250</div>
+                  </div>
+                </div>
+                <div class="preview-controls">
+                  <span id="preview-size-label">300 × 250</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- VAST XML Tab -->
+        <div class="tab-content" id="tab-vast-xml">
+          <div class="vast-xml-container">
+            <div class="vast-xml-header">
+              <span>VAST 4.2 XML</span>
+              <button id="btn-copy-vast" class="btn btn-small">📋 复制</button>
+            </div>
+            <div class="vast-xml-content-container">
+              <pre id="vast-xml-content"><code>点击"生成 VAST XML"按钮查看内容</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Status Bar -->
+    <footer class="status-bar">
+      <span id="status-message">就绪</span>
+      <span id="ima-status" class="ima-status">IMA SDK: 加载中...</span>
+    </footer>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast"></div>
+
+  <script src="playground.js"></script>
+</body>
+</html>

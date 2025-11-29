@@ -1,0 +1,27 @@
+# OpenSpec
+openspec/
+
+# Development files
+server.js
+*.md
+.git
+.gitignore
+
+# Editor
+.cursor/
+.claude/
+.gemini/
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Unnecessary for production
+src/lib/
+src/dist/

@@ -1,0 +1,13 @@
+{
+  "defaultEnv": "prod",
+  "envs": {
+    "dev": {
+      "TRACKER_SDK_URL": "https://cdn.roai.shop/dsp-sdk/js/TrackingVideoSdk-html-test.min.js"
+    },
+    "test": {
+      "TRACKER_SDK_URL": "https://cdn.roai.shop/dsp-sdk/js/TrackingVideoSdk-html-test.min.js"
+    },
+    "prod": {
+    }
+  }
+}
