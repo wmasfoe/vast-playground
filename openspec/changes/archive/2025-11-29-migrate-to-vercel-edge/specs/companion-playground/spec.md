@@ -44,23 +44,6 @@ Playground 必须（SHALL）提供可视化界面，允许用户配置伴随广�
 - **THEN** 用户也可以选择「自定义」并输入任意宽高值
 - **THEN** 支持拖拽调整尺寸，自动吸附到 IAB 标准尺寸
 
----
-
-## REMOVED Requirements
-
-### Requirement: 选择预设模板（原场景）
-
-**Reason**: 部署到 Vercel 后不再支持服务端读取本地模板文件
-
-**Migration**: 用户通过以下方式提供模板：
-1. 手动输入 HTML
-2. 选择本地 .html 文件
-3. 从 URL 加载（需目标服务器支持 CORS）
-
----
-
-## MODIFIED Requirements
-
 ### Requirement: 独立部署与启动
 
 Playground 必须（SHALL）支持 Vercel 平台部署，并保持本地开发能力。
@@ -79,43 +62,37 @@ Playground 必须（SHALL）支持 Vercel 平台部署，并保持本地开发�
 - **THEN** API 端点和静态文件均可访问
 - **THEN** 支持热重载
 
-#### Scenario: API 使用 Vercel KV 存储
+#### Scenario: API 使用 Vercel Blob 存储
 
 - **WHEN** 用户请求生成 VAST XML
-- **THEN** 服务端生成 VAST XML 并存储到 Vercel KV
+- **THEN** 服务端生成 VAST XML 并存储到 Vercel Blob
 - **THEN** 返回 `vastUrl` 供 IMA SDK 获取 VAST XML
 
 ---
 
 ## ADDED Requirements
 
-### Requirement: Vercel KV 状态存储
+### Requirement: Vercel Blob 状态存储
 
-服务端必须（SHALL）使用 Vercel KV 存储生成的 VAST XML 和伴随广告 HTML。
+服务端必须（SHALL）使用 Vercel Blob 存储生成的 VAST XML 和伴随广告 HTML。
 
 #### Scenario: 存储 VAST 数据
 
 - **WHEN** 用户请求生成 VAST XML
 - **THEN** 服务端生成唯一 ID
-- **THEN** 将 VAST XML 存储到 KV，key 为 `vast-{id}`，TTL 为 30 分钟
-- **THEN** 将伴随广告 HTML 存储到 KV，key 为 `companion-{id}`，TTL 为 30 分钟
+- **THEN** 将 VAST XML 存储到 Blob，文件名为 `vast/{id}.xml`
+- **THEN** 将伴随广告 HTML 存储到 Blob，文件名为 `companion/{id}.html`
 - **THEN** 返回 `vastUrl` 供前端传递给 IMA SDK
+- **THEN** 返回的数据包含 Blob 的公开 URL
 
 #### Scenario: 读取 VAST XML
 
-- **WHEN** IMA SDK 请求 `/api/vast/{id}.xml`
-- **THEN** 服务端从 KV 读取对应的 VAST XML
-- **THEN** 返回 `Content-Type: application/xml`
+- **WHEN** IMA SDK 请求 Blob 返回的 `vastUrl`
+- **THEN** Vercel Blob 直接返回对应的 XML 内容
+- **THEN** 内容类型为 `application/xml`
 
 #### Scenario: 读取伴随广告 HTML
 
-- **WHEN** IMA SDK 请求 `/api/vast/companion/{id}`
-- **THEN** 服务端从 KV 读取对应的伴随广告 HTML
-- **THEN** 包装为完整 HTML 文档返回
-
-#### Scenario: VAST 数据过期
-
-- **WHEN** VAST 数据超过 30 分钟 TTL
-- **THEN** KV 自动删除过期数据
-- **WHEN** IMA SDK 请求已过期的 VAST
-- **THEN** 返回 404 错误
+- **WHEN** IMA SDK 请求 Blob 返回的伴随广告 URL
+- **THEN** Vercel Blob 直接返回对应的 HTML 内容
+- **THEN** 内容类型为 `text/html`

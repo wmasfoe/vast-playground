@@ -1,4 +1,10 @@
-## ADDED Requirements
+# VAST Companion Ad Playground Specification
+
+## Purpose
+
+Provides a standalone, web-based playground for testing and previewing VAST 4.2 companion ads. This tool allows ad operations teams and developers to validate companion ad behaviors, test templates, and simulate ad serving scenarios using Google IMA SDK, without needing a full ad server environment.
+
+## Requirements
 
 ### Requirement: VAST XML 生成能力
 
@@ -70,17 +76,27 @@ Playground 必须（SHALL）提供可视化界面，允许用户配置伴随广�
 - **THEN** 界面提供视频 URL 输入框
 - **THEN** 支持输入 MP4 格式视频的直链地址
 
-#### Scenario: 选择预设模板
+#### Scenario: 从本地文件加载模板
 
-- **WHEN** 用户点击"选择模板"
-- **THEN** 服务端自动读取 `companion-template/` 目录，显示可用模板列表
-- **THEN** 用户选择后，模板内容自动填充到编辑器
+- **WHEN** 用户点击「选择文件」按钮并选择一个 .html 文件
+- **THEN** 文件内容被读取并填充到模板编辑器
+- **THEN** 自动检测并列出模板中使用的宏变量
+
+#### Scenario: 从 URL 加载模板
+
+- **WHEN** 用户输入一个 URL 并点击「加载」
+- **THEN** 系统尝试从该 URL 获取 HTML 内容
+- **WHEN** 请求成功
+- **THEN** HTML 内容填充到模板编辑器
+- **WHEN** 请求因 CORS 限制失败
+- **THEN** 显示提示「目标服务器不允许跨域访问，请下载文件后使用文件选择功能」
 
 #### Scenario: 选择预览尺寸
 
 - **WHEN** 用户需要调整预览窗口尺寸
-- **THEN** 界面提供预设尺寸选项（如 iPhone SE、iPhone 8、iPhone 11、Pixel 5、iPad Mini）
-- **THEN** 用户也可以选择"自定义"并输入任意宽高值
+- **THEN** 界面提供 IAB 标准预设尺寸选项（如 300×250、728×90、300×600 等）
+- **THEN** 用户也可以选择「自定义」并输入任意宽高值
+- **THEN** 支持拖拽调整尺寸，自动吸附到 IAB 标准尺寸
 
 ---
 
@@ -127,25 +143,27 @@ Playground 必须（SHALL）在预览模式下正确渲染伴随广告，并保�
 
 ### Requirement: 独立部署与启动
 
-Playground 必须（SHALL）作为独立模块部署，与现有项目代码完全解耦。
+Playground 必须（SHALL）支持 Vercel 平台部署，并保持本地开发能力。
 
-#### Scenario: 独立目录结构
+#### Scenario: Vercel 部署
 
-- **WHEN** 开发者查看 `companion-playground/` 目录
-- **THEN** 目录包含完整的运行所需文件（server.js、前端文件、依赖配置）
-- **THEN** 不依赖项目根目录的 `server.js` 或其他模块
+- **WHEN** 用户将代码推送到 GitHub 并连接 Vercel
+- **THEN** Vercel 自动构建并部署应用
+- **THEN** 静态文件（HTML/CSS/JS）由 Vercel CDN 托管
+- **THEN** API 端点作为 Serverless Functions 运行
 
-#### Scenario: 独立启动命令
+#### Scenario: 本地开发
 
-- **WHEN** 开发者在 `companion-playground/` 目录执行 `npm start`
-- **THEN** 独立的 Express 服务器启动
-- **THEN** 自动打开浏览器访问 Playground 页面
+- **WHEN** 开发者执行 `vercel dev` 或 `npm run dev`
+- **THEN** 本地启动开发服务器
+- **THEN** API 端点和静态文件均可访问
+- **THEN** 支持热重载
 
-#### Scenario: 读取外部模板目录
+#### Scenario: API 使用 Vercel Blob 存储
 
-- **WHEN** Playground 服务器启动
-- **THEN** 服务器能够读取 `../companion-template/` 目录下的模板文件
-- **THEN** 模板列表在前端可选择使用
+- **WHEN** 用户请求生成 VAST XML
+- **THEN** 服务端生成 VAST XML 并存储到 Vercel Blob
+- **THEN** 返回 `vastUrl` 供 IMA SDK 获取 VAST XML
 
 ---
 
@@ -182,3 +200,30 @@ Playground 必须（SHALL）作为独立模块部署，与现有项目代码完�
 
 - **WHEN** 用户选择 Post-roll（片尾）广告插入时机
 - **THEN** 内容视频播放完成后，播放广告视频 + 显示伴随广告
+
+---
+
+### Requirement: Vercel Blob 状态存储
+
+服务端必须（SHALL）使用 Vercel Blob 存储生成的 VAST XML 和伴随广告 HTML。
+
+#### Scenario: 存储 VAST 数据
+
+- **WHEN** 用户请求生成 VAST XML
+- **THEN** 服务端生成唯一 ID
+- **THEN** 将 VAST XML 存储到 Blob，文件名为 `vast/{id}.xml`
+- **THEN** 将伴随广告 HTML 存储到 Blob，文件名为 `companion/{id}.html`
+- **THEN** 返回 `vastUrl` 供前端传递给 IMA SDK
+- **THEN** 返回的数据包含 Blob 的公开 URL
+
+#### Scenario: 读取 VAST XML
+
+- **WHEN** IMA SDK 请求 Blob 返回的 `vastUrl`
+- **THEN** Vercel Blob 直接返回对应的 XML 内容
+- **THEN** 内容类型为 `application/xml`
+
+#### Scenario: 读取伴随广告 HTML
+
+- **WHEN** IMA SDK 请求 Blob 返回的伴随广告 URL
+- **THEN** Vercel Blob 直接返回对应的 HTML 内容
+- **THEN** 内容类型为 `text/html`

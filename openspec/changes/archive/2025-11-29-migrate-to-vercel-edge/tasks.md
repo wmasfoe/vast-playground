@@ -13,20 +13,18 @@
 
 ## 3. API 改造为 Vercel Serverless
 
-- [x] 3.1 安装 `@vercel/kv` 依赖
-- [x] 3.2 创建 `/api/vast/generate.js` Serverless Function（集成 Vercel KV）
-- [x] 3.3 创建 `/api/vast/[id].js` 从 KV 读取 VAST XML
-- [x] 3.4 创建 `/api/vast/companion/[id].js` 从 KV 读取伴随广告 HTML
-- [x] 3.5 将 `lib/vast-generator.js` 调整为兼容 Serverless 环境
-- [x] 3.6 创建 `/api/health.js` 健康检查端点
-- [x] 3.7 本地测试 Serverless Functions（`vercel dev`）
+- [x] 3.1 安装 `@vercel/blob` 依赖
+- [x] 3.2 创建 `/api/vast/generate.js` Serverless Function（集成 Vercel Blob）
+- [x] 3.3 将 `lib/vast-generator.js` 调整为兼容 Serverless 环境
+- [x] 3.4 创建 `/api/health.js` 健康检查端点
+- [x] 3.5 本地测试 Serverless Functions（`vercel dev`）
 
 ## 4. Vercel 部署配置
 
 - [x] 4.1 创建 `vercel.json` 配置文件
 - [x] 4.2 更新 `package.json`（移除 prestart，更新 scripts）
 - [x] 4.3 添加 `.vercelignore` 忽略不需要的文件
-- [x] 4.4 在 Vercel 控制台创建 KV 数据库并配置环境变量
+- [x] 4.4 在 Vercel 控制台创建 Blob 存储并配置环境变量
 - [x] 4.5 测试 Vercel 部署（Preview 环境）
 
 ## 5. 清理与文档
@@ -34,4 +32,4 @@
 - [x] 5.1 保留 `server.js` 用于本地开发（回滚方案）
 - [x] 5.2 更新 `README.md` 部署说明
 - [x] 5.3 更新 `CLAUDE.md` 开发指南
-- [ ] 5.4 归档此变更提案
+- [x] 5.4 归档此变更提案
